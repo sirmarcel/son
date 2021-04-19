@@ -78,6 +78,7 @@ This is a valid _son_ string:
   "second name": "Droste",
   "age": 57
 }
+---
 ```
 
 It will be parsed into the metadata object, and a list containing the data objects with
@@ -91,9 +92,23 @@ It will be parsed into the metadata object, and a list containing the data objec
 [{'first name': 'Hildegard', 'second name': 'Kneef', 'age': 93}, {'first name': 'Wiglaf', 'second name': 'Droste', 'age': 57}]
 ```
 
+## API
+
+`son` exposes three functions: `dump`, `load`, and `open`.
+
+- `dump(obj, file, is_metadata=False, encoding="utf-8", **kwargs)` writes a string representation of `obj` to `file`. If the file does not exist yet, `is_metadata` can be `True`, and `obj` will be marked as metadata with the `===` delimiter.
+- `load(file, verbose=False, encoding="utf-8", **kwargs)` loads a `son` file, returning `(metadata, data)` where `data` is a `list` of de-serialized entries in `file`.
+- `open(file, verbose=False, encoding="utf-8", **kwargs)` does the same, but returns an iterator generator in place of `data`. Since this avoids reading the file all at once, this function should be preferred for performance-intensive applications.
+
+The `kwargs` will be passed to the de-/serialization routines, which can in turn be specified with `loader` and `dumper` keyword arguments. They must be callables that turn strings into objects, and vice-versa. By default, we use `json.loads` and `json.dumps`.
+
+The public-facing interface can be found in `interface.py`, the de-/serialization logic in `serialize.py` and the low-level write/read routines in `stream.py`.
+
 --- 
 
 ## Changelog
+
+v0.4.0: switch to a backend based on generators, allowing large files to be parsed on-the-fly. general cleanup, remove `progressbar`. contributed by @sirmarcel
 
 v0.3.3: Add documentation via [`mkdocs`](https://www.mkdocs.org/) and [`mkdocs-material`](https://squidfunk.github.io/mkdocs-material/)
 
