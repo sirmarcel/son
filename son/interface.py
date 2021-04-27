@@ -54,6 +54,35 @@ def load(file, verbose=False, encoding="utf-8", **kwargs):
     return metadata, data
 
 
+def load_last(file, verbose=False, encoding="utf-8", **kwargs):
+    """load and decode son last entry of son file
+
+    Args:
+        file (path/str): load file
+        verbose (boolean): be verbose
+        encoding (optional, str): encoding to pass to open()
+            defaults to "utf-8"
+        kwargs (optional): kwargs for son.serialize.load
+
+    Returns:
+        metadata, last: metadata and last entry of file
+            (None, None) if empty
+    """
+
+    from .last import last
+
+    if verbose:
+        print(f"[son] get last entry from:  {file}", flush=True)
+
+    metadata = get_metadata(file, encoding=encoding, **kwargs)
+
+    with open(file, encoding=encoding) as f:
+        record = last(f)
+        record = serialize.load(record, **kwargs)
+
+    return metadata, record
+
+
 def _open(file, verbose=False, encoding="utf-8", **kwargs):
     """open and decode son file on the fly
 
@@ -80,9 +109,14 @@ def _open(file, verbose=False, encoding="utf-8", **kwargs):
     if verbose:
         print(f"[son] open file:  {file}", flush=True)
 
+    metadata = get_metadata(file, encoding=encoding, **kwargs)
+
+    return metadata, reader(file, encoding=encoding, **kwargs)
+
+
+def get_metadata(file, encoding="utf-8", **kwargs):
     metadata = None
 
-    # retrieve metadata
     with open(file, encoding=encoding) as f:
         try:
             record, is_metadata = next(stream.read(f))
@@ -91,7 +125,7 @@ def _open(file, verbose=False, encoding="utf-8", **kwargs):
         except StopIteration:
             pass  # file is empty
 
-    return metadata, reader(file, encoding=encoding, **kwargs)
+    return metadata
 
 
 def reader(file, encoding="utf-8", **kwargs):
