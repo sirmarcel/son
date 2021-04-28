@@ -24,10 +24,10 @@ def write(file, metadata, data, clean_first=True):
         son.dump(obj, file, indent=2)
 
 
-def test_write(fname=fname, metadata=m, data=[d1, d2], clean_first=True):
+def test_write(fname=fname, metadata=m, d=[d1, d2], clean_first=True):
     """test son.dump"""
 
-    write(fname, m, data, clean_first=clean_first)
+    write(fname, m, d, clean_first=clean_first)
 
 
 def test_read(fname=fname, m=m, d=[d1, d2]):
@@ -45,6 +45,14 @@ def test_read(fname=fname, m=m, d=[d1, d2]):
         assert data == d[i]
 
 
+def test_read_last(fname=fname, m=m, d=[d1, d2]):
+    """test son.load_last"""
+    metadata, data = son.load_last(fname)
+
+    assert metadata == m
+    assert data == d[-1]
+
+
 def test_write_again(fname=fname):
     """test if writing again throws error"""
 
@@ -55,23 +63,49 @@ def test_write_again(fname=fname):
         pass
 
 
-def test_write_no_metadata(fname=fname, data=[d1, d2]):
+def test_write_no_metadata(fname=fname, d=[d1, d2]):
     """test son.dump w/o metadata"""
 
-    write(fname, None, data, clean_first=True)
+    write(fname, None, d, clean_first=True)
 
 
-def test_read_no_metadata(fname=fname):
+def test_read_no_metadata(fname=fname, d=[d1, d2]):
     """test son.load w/o metadata"""
     metadata, data = son.load(fname)
 
     assert metadata is None
-    assert data == [d1, d2]
+    assert data == d
+
+
+def test_read_last_no_metadata(fname=fname, d=[d1, d2]):
+    """test son.load_last w/o metadata"""
+    metadata, data = son.load_last(fname)
+
+    assert metadata is None
+    assert data == d[-1]
+
+
+def test_read_empty(fname=fname):
+    with open(fname, "w") as f:
+        f.write("")
+
+    meta, data = son.load(fname)
+
+    assert meta is None
+    assert data == []
+
+    meta, data = son.load_last(fname)
+
+    assert meta is None
+    assert data is None
 
 
 if __name__ == "__main__":
     test_write()
     test_read()
+    test_read_last()
     test_write_again()
     test_write_no_metadata()
     test_read_no_metadata()
+    test_read_last_no_metadata()
+    test_read_empty()

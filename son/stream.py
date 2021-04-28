@@ -6,7 +6,6 @@ and retrieved from them.
 An entry is defined as a (multi-line) string followed by a line that contains *only*
 a delimiter, either === for metadata or --- for "normal" records.
 
-
 """
 
 token_metadata = "==="

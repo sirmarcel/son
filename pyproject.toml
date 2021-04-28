@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "son"
-version = "0.4.0"
+version = "0.4.1"
 description = "Tools to read and write .son files"
 authors = ["Florian Knoop", "Marcel F. Langer"]
 license = "ISC"
@@ -11,6 +11,7 @@ keywords = ["file format", "data"]
 
 [tool.poetry.dependencies]
 python = ">=3.5"
+lz = "^0.11.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
